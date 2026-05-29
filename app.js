@@ -6,6 +6,7 @@ const previousDateButton = document.querySelector("#previousDateButton");
 const selectedDateText = document.querySelector("#selectedDateText");
 const nextDateButton = document.querySelector("#nextDateButton");
 const filterTabs = document.querySelectorAll(".filter-tab");
+const TODO_STORAGE_KEY = "dailyTodoItems";
 
 let todos = [];
 let currentFilter = "all";
@@ -59,6 +60,34 @@ function moveSelectedDate(dayAmount) {
   updateSelectedDateText();
   showMessage("");
   renderTodos();
+}
+
+///////////////////////////////////////
+// 로컬스토리지
+///////////////////////////////////////
+
+// Todo 배열을 JSON 문자열로 변환해 로컬스토리지에 저장합니다.
+function saveTodosToLocalStorage() {
+  localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
+}
+
+// 로컬스토리지에 저장된 JSON 문자열을 Todo 배열로 복원합니다.
+function loadTodosFromLocalStorage() {
+  const savedTodos = localStorage.getItem(TODO_STORAGE_KEY);
+
+  if (!savedTodos) {
+    return;
+  }
+
+  try {
+    const parsedTodos = JSON.parse(savedTodos);
+
+    if (Array.isArray(parsedTodos)) {
+      todos = parsedTodos;
+    }
+  } catch (error) {
+    showMessage("저장된 Todo 데이터를 불러오지 못했습니다.");
+  }
 }
 
 ///////////////////////////////////////
@@ -124,6 +153,7 @@ function addTodo(todoText) {
   };
 
   todos.push(newTodo);
+  saveTodosToLocalStorage();
   renderTodos();
 }
 
@@ -167,6 +197,7 @@ function editTodo(todoId) {
   }
 
   selectedTodo.text = trimmedEditedText;
+  saveTodosToLocalStorage();
   showMessage("");
   renderTodos();
 }
@@ -184,6 +215,7 @@ function toggleTodoCompletion(todoId) {
     };
   });
 
+  saveTodosToLocalStorage();
   showMessage("");
   renderTodos();
 }
@@ -191,6 +223,7 @@ function toggleTodoCompletion(todoId) {
 // 선택한 Todo를 배열에서 제거한 뒤 화면을 갱신합니다.
 function deleteTodo(todoId) {
   todos = todos.filter((todo) => todo.id !== todoId);
+  saveTodosToLocalStorage();
   showMessage("");
   renderTodos();
 }
@@ -236,7 +269,9 @@ function handleFilterTabClick(event) {
 // init
 ///////////////////////////
 
+loadTodosFromLocalStorage();
 updateSelectedDateText();
+renderTodos();
 
 previousDateButton.addEventListener("click", () => moveSelectedDate(-1));
 nextDateButton.addEventListener("click", () => moveSelectedDate(1));
