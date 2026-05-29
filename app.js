@@ -196,7 +196,7 @@ function deleteTodo(todoId) {
 }
 
 //////////////////////////////////////////
-// status filter util
+// filter util
 //////////////////////////////////////////
 
 // 선택된 날짜와 현재 상태 필터에 맞는 Todo만 반환합니다.
@@ -231,6 +231,10 @@ function handleFilterTabClick(event) {
   updateFilterTabStyles();
   renderTodos();
 }
+
+///////////////////////////
+// init
+///////////////////////////
 
 updateSelectedDateText();
 
