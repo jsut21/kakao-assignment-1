@@ -28,6 +28,36 @@
 
         <p id="messageText" class="message-text" role="status" aria-live="polite"></p>
 
+        <div class="filter-tabs" role="tablist" aria-label="Todo 상태 필터">
+          <button
+            class="filter-tab active"
+            type="button"
+            data-filter="all"
+            role="tab"
+            aria-selected="true"
+          >
+            전체
+          </button>
+          <button
+            class="filter-tab"
+            type="button"
+            data-filter="active"
+            role="tab"
+            aria-selected="false"
+          >
+            진행 중
+          </button>
+          <button
+            class="filter-tab"
+            type="button"
+            data-filter="completed"
+            role="tab"
+            aria-selected="false"
+          >
+            완료
+          </button>
+        </div>
+
         <ul id="todoList" class="todo-list" aria-label="Todo 목록"></ul>
       </section>
     </main>
