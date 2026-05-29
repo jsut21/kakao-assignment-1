@@ -2,10 +2,14 @@ const todoForm = document.querySelector("#todoForm");
 const todoInput = document.querySelector("#todoInput");
 const messageText = document.querySelector("#messageText");
 const todoList = document.querySelector("#todoList");
+const previousDateButton = document.querySelector("#previousDateButton");
+const selectedDateText = document.querySelector("#selectedDateText");
+const nextDateButton = document.querySelector("#nextDateButton");
 const filterTabs = document.querySelectorAll(".filter-tab");
 
 let todos = [];
 let currentFilter = "all";
+let selectedDate = new Date();
 
 ///////////////////////////////
 // 로깅
@@ -14,6 +18,47 @@ let currentFilter = "all";
 // 안내 메시지를 한 곳에서 관리해 중복 표시 로직을 줄입니다.
 function showMessage(message) {
   messageText.textContent = message;
+}
+
+///////////////////////////////////////
+// 날짜 관리
+///////////////////////////////////////
+
+// 날짜를 Todo 저장과 비교에 사용할 수 있는 YYYY-MM-DD 형식으로 변환합니다.
+function getDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+// 선택된 날짜를 사용자가 읽기 쉬운 한국어 날짜 문구로 표시합니다.
+function getDateDisplayText(date) {
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }).format(date);
+}
+
+// 화면 상단의 날짜 표시를 현재 선택된 날짜로 갱신합니다.
+function updateSelectedDateText() {
+  selectedDateText.textContent = getDateDisplayText(selectedDate);
+}
+
+// 이전/다음 버튼 클릭 시 선택 날짜를 이동하고 해당 날짜의 Todo만 다시 보여줍니다.
+function moveSelectedDate(dayAmount) {
+  selectedDate = new Date(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate() + dayAmount
+  );
+
+  updateSelectedDateText();
+  showMessage("");
+  renderTodos();
 }
 
 ///////////////////////////////////////
@@ -75,6 +120,7 @@ function addTodo(todoText) {
     id: Date.now(),
     text: todoText,
     isCompleted: false,
+    date: getDateKey(selectedDate),
   };
 
   todos.push(newTodo);
@@ -153,17 +199,20 @@ function deleteTodo(todoId) {
 // status filter util
 //////////////////////////////////////////
 
-// 현재 선택된 필터에 맞는 Todo만 반환합니다.
+// 선택된 날짜와 현재 상태 필터에 맞는 Todo만 반환합니다.
 function getFilteredTodos() {
+  const selectedDateKey = getDateKey(selectedDate);
+  const todosBySelectedDate = todos.filter((todo) => todo.date === selectedDateKey);
+
   if (currentFilter === "active") {
-    return todos.filter((todo) => !todo.isCompleted);
+    return todosBySelectedDate.filter((todo) => !todo.isCompleted);
   }
 
   if (currentFilter === "completed") {
-    return todos.filter((todo) => todo.isCompleted);
+    return todosBySelectedDate.filter((todo) => todo.isCompleted);
   }
 
-  return todos;
+  return todosBySelectedDate;
 }
 
 // 선택된 필터 탭을 시각적으로 구분하고 접근성 상태도 함께 갱신합니다.
@@ -183,6 +232,10 @@ function handleFilterTabClick(event) {
   renderTodos();
 }
 
+updateSelectedDateText();
+
+previousDateButton.addEventListener("click", () => moveSelectedDate(-1));
+nextDateButton.addEventListener("click", () => moveSelectedDate(1));
 todoForm.addEventListener("submit", safeAddTodo);
 filterTabs.forEach((filterTab) => {
   filterTab.addEventListener("click", handleFilterTabClick);
