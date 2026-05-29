@@ -20,29 +20,6 @@ function showMessage(message) {
 // 렌더링
 ///////////////////////////////////////
 
-// 현재 선택된 필터에 맞는 Todo만 반환합니다.
-function getFilteredTodos() {
-  if (currentFilter === "active") {
-    return todos.filter((todo) => !todo.isCompleted);
-  }
-
-  if (currentFilter === "completed") {
-    return todos.filter((todo) => todo.isCompleted);
-  }
-
-  return todos;
-}
-
-// 선택된 필터 탭을 시각적으로 구분하고 접근성 상태도 함께 갱신합니다.
-function updateFilterTabStyles() {
-  filterTabs.forEach((filterTab) => {
-    const isSelected = filterTab.dataset.filter === currentFilter;
-
-    filterTab.classList.toggle("active", isSelected);
-    filterTab.setAttribute("aria-selected", String(isSelected));
-  });
-}
-
 // 현재 필터가 적용된 todos 배열을 기준으로 화면 목록을 다시 그립니다.
 function renderTodos() {
   todoList.innerHTML = "";
@@ -170,6 +147,33 @@ function deleteTodo(todoId) {
   todos = todos.filter((todo) => todo.id !== todoId);
   showMessage("");
   renderTodos();
+}
+
+//////////////////////////////////////////
+// status filter util
+//////////////////////////////////////////
+
+// 현재 선택된 필터에 맞는 Todo만 반환합니다.
+function getFilteredTodos() {
+  if (currentFilter === "active") {
+    return todos.filter((todo) => !todo.isCompleted);
+  }
+
+  if (currentFilter === "completed") {
+    return todos.filter((todo) => todo.isCompleted);
+  }
+
+  return todos;
+}
+
+// 선택된 필터 탭을 시각적으로 구분하고 접근성 상태도 함께 갱신합니다.
+function updateFilterTabStyles() {
+  filterTabs.forEach((filterTab) => {
+    const isSelected = filterTab.dataset.filter === currentFilter;
+
+    filterTab.classList.toggle("active", isSelected);
+    filterTab.setAttribute("aria-selected", String(isSelected));
+  });
 }
 
 // 필터 탭 클릭 시 현재 필터를 바꾸고 목록을 다시 그립니다.
