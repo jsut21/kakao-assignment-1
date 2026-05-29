@@ -5,15 +5,18 @@ const todoList = document.querySelector("#todoList");
 
 let todos = [];
 
+///////////////////////////////
+// 로깅
+///////////////////////////////
+
 // 안내 메시지를 한 곳에서 관리해 중복 표시 로직을 줄입니다.
 function showMessage(message) {
   messageText.textContent = message;
 }
 
-// 입력값 앞뒤 공백을 제거해 실제 내용이 있는 Todo만 생성합니다.
-function getTrimmedInputValue() {
-  return todoInput.value.trim();
-}
+///////////////////////////////////////
+// 렌더링
+///////////////////////////////////////
 
 // 현재 todos 배열을 기준으로 화면 목록을 다시 그립니다.
 function renderTodos() {
@@ -58,6 +61,10 @@ function renderTodos() {
   });
 }
 
+////////////////////////////////////////////
+// CRUD
+////////////////////////////////////////////
+
 // 새 Todo 객체를 만들고 목록 맨 뒤에 추가합니다.
 function addTodo(todoText) {
   const newTodo = {
@@ -68,6 +75,24 @@ function addTodo(todoText) {
 
   todos.push(newTodo);
   renderTodos();
+}
+
+// 폼 제출 시 빈 값이면 안내하고, 값이 있으면 Todo를 생성합니다.
+function safeAddTodo(event) {
+  event.preventDefault();
+
+  const todoText = todoInput.value.trim();
+
+  if (!todoText) {
+    showMessage("할 일을 입력해주세요.");
+    todoInput.focus();
+    return;
+  }
+
+  addTodo(todoText);
+  todoInput.value = "";
+  showMessage("");
+  todoInput.focus();
 }
 
 // prompt로 새 내용을 입력받아 해당 Todo의 텍스트를 수정합니다.
@@ -120,22 +145,4 @@ function deleteTodo(todoId) {
   renderTodos();
 }
 
-// 폼 제출 시 빈 값이면 안내하고, 값이 있으면 Todo를 생성합니다.
-function handleTodoFormSubmit(event) {
-  event.preventDefault();
-
-  const todoText = getTrimmedInputValue();
-
-  if (!todoText) {
-    showMessage("할 일을 입력해주세요.");
-    todoInput.focus();
-    return;
-  }
-
-  addTodo(todoText);
-  todoInput.value = "";
-  showMessage("");
-  todoInput.focus();
-}
-
-todoForm.addEventListener("submit", handleTodoFormSubmit);
+todoForm.addEventListener("submit", safeAddTodo);
