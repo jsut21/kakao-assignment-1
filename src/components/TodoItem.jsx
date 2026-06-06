@@ -70,12 +70,19 @@ function TodoItem({ todo, onShowMessage, onUpdateTodo, onToggleTodo, onDeleteTod
             수정
           </button>
         )}
-        <button className="min-h-9 min-w-14 rounded-lg bg-[#f0edf7] px-3 text-sm font-bold text-[#258a5d] transition hover:bg-[#e4dcf4] max-[560px]:w-full" type="button" onClick={() => onToggleTodo(todo.id)}>
-          {todo.isCompleted ? "취소" : "완료"}
-        </button>
-        <button className="min-h-9 min-w-14 rounded-lg bg-[#f0edf7] px-3 text-sm font-bold text-[#d83a52] transition hover:bg-[#e4dcf4] max-[560px]:w-full" type="button" onClick={() => onDeleteTodo(todo.id)}>
-          삭제
-        </button>
+        {isEditing ?(
+          <>
+          </>
+        ) : (
+          <>
+            <button className="min-h-9 min-w-14 rounded-lg bg-[#f0edf7] px-3 text-sm font-bold text-[#258a5d] transition hover:bg-[#e4dcf4] max-[560px]:w-full" type="button" onClick={() => onToggleTodo(todo.id)}>
+              {todo.isCompleted ? "취소" : "완료"}
+            </button>
+            <button className="min-h-9 min-w-14 rounded-lg bg-[#f0edf7] px-3 text-sm font-bold text-[#d83a52] transition hover:bg-[#e4dcf4] max-[560px]:w-full" type="button" onClick={() => onDeleteTodo(todo.id)}>
+              삭제
+            </button>
+          </>
+        )}
       </div>
     </li>
   );
